@@ -38,6 +38,16 @@ module.exports = {
   },
 };
 ```
+
+The configuration file can simplify to `exports.key = value` format
+
+```js
+exports.keys = 'my-cookie-secret-key';
+exports.logger = {
+  level: 'DEBUG',
+};
+```
+
 The configuration file can also return a function which could receive a parameter called `appInfo`
 
 ```js
@@ -75,7 +85,7 @@ Here is one sequence of loading configurations under "prod" environment, in whic
 	-> plugin config.prod.js
 	-> framework config.prod.js
 	-> application config.prod.js
-	
+
 **Note: there will be plugin loading sequence, but the approximate order is similar. For specific logic, please check the [loader](../advanced/loader.md) .**
 
 ### Merging rule
@@ -163,9 +173,19 @@ path is an absolute path so that the application can put self developed plugins 
 
 ## Configuration result
 
-The final merged config will be dumped to `run/application_config.json`(for worker process) and `run/agent_config.json`(for agent process) when the framework starts, which can help analyzing problems.
+The final merged config will be dumped to `run/application_config.json`(for worker process) and `run/agent_config.json`(for agent process) when the framework started, which can help analyzing problems.
 
 Some fields are hidden in the config file, mainly including 2 types:
 
 - like passwords, secret keys and other security related fields which can be configured in `config.dump.ignore` and only [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) type is accepted. See [Default Configs](https://github.com/eggjs/egg/blob/master/config/config.default.js)
 - like Function, Buffer, etc. whose content converted by `JSON.stringify` will be specially large.
+
+`run/application_config_meta.json` (for worker process）and `run/agent_config_meta.json` (for agent process) will also be dumped that show which file defines the property, see below
+
+```json
+{
+  "logger": {
+    "dir": "/path/to/config/config.default.js"
+  }
+}
+```
